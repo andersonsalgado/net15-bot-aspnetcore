@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using SimpleBotCore.Logic;
 
 namespace SimpleBotCore.Controllers
@@ -24,6 +27,19 @@ namespace SimpleBotCore.Controllers
         {
             return "Hello World";
         }
+
+        [HttpGet]
+        [Route("getAllMessagens")]
+        public List<SimpleMessage> GetAllMessagens()
+        {
+            var cliente = new MongoClient("mongodb://localhost:27017");
+            var db = cliente.GetDatabase("15Net");
+            var col = db.GetCollection<SimpleMessage>("message");
+
+            var linhas = col.Find(FilterDefinition<SimpleMessage>.Empty);
+            return linhas.ToList();
+        }
+
 
         // POST api/messages
         [HttpPost]

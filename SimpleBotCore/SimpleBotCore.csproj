@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Logic\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
     <PackageReference Include="Microsoft.Bot.Connector" Version="4.4.4" />
+    <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
   </ItemGroup>
 
   <ItemGroup>

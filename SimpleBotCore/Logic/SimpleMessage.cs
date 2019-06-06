@@ -7,9 +7,9 @@ namespace SimpleBotCore.Logic
 {
     public class SimpleMessage
     {
-        public string Id { get; }
-        public string User { get; }
-        public string Text { get; }
+        public string Id { get; set; }
+        public string User { get; set; }
+        public string Text { get; set; }
 
         public SimpleMessage(string id, string username, string text)
         {
