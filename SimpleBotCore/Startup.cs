@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SimpleBotCore.Logic;
+using SimpleBotCore.Repositorio.Mongo;
 
 namespace SimpleBotCore
 {
@@ -25,6 +26,13 @@ namespace SimpleBotCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<SimpleBotUser>();
+
+
+            //Injetando os repositorios
+            services.AddTransient(typeof(MensagemRepositorio));
+            services.AddTransient(typeof(ContadorRepositorio));
+            
+
             services.AddMvc();
         }
 

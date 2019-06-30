@@ -6,20 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using SimpleBotCore.App_Code;
 using SimpleBotCore.Logic;
+using SimpleBotCore.Repositorio.Mongo;
 
 namespace SimpleBotCore.Controllers
 {
     [Route("api/[controller]")]
     public class MessagesController : Controller
     {
-        SimpleBotUser _bot = new SimpleBotUser();
+        SimpleBotUser _bot;
 
-        public MessagesController(SimpleBotUser bot)
+        public String _strConnection;
+
+        public MessagesController(SimpleBotUser bot, IConfiguration config)
         {
             this._bot = bot;
+            this._strConnection = Util_ConfigSecrets.StrConnectionMongoDB(config);
         }
 
         [HttpGet]
@@ -32,7 +38,7 @@ namespace SimpleBotCore.Controllers
         [Route("getAllMessagens")]
         public List<SimpleMessage> GetAllMessagens()
         {
-            var cliente = new MongoClient("mongodb://localhost:27017");
+            var cliente = new MongoClient(this._strConnection);
             var db = cliente.GetDatabase("15Net");
             var col = db.GetCollection<SimpleMessage>("message");
 
