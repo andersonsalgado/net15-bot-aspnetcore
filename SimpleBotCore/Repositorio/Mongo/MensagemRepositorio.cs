@@ -32,19 +32,36 @@ namespace SimpleBotCore.Repositorio.Mongo
 
         public void GravarMensagem(SimpleMessage mensagem)
         {
-            var colecaoMensagem = _dataBase.GetCollection<SimpleMessage>("message");
 
-            mensagem.Id = Convert.ToString(ObjectId.GenerateNewId(DateTime.Now));
-            colecaoMensagem.InsertOne(mensagem);
+            try
+            {
+                var colecaoMensagem = _dataBase.GetCollection<SimpleMessage>("message");
+
+                mensagem.Id = Convert.ToString(ObjectId.GenerateNewId(DateTime.Now));
+                colecaoMensagem.InsertOne(mensagem);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MensagemRepositorio - Ocorreu um erro no metodo GravarMensagem. Erro: {ExceptionHelper.RecuperarDescricaoErro(ex)}");
+            }
 
         }
 
 
         public List<SimpleMessage> RetornarTodasMensagens()
         {
-            var colecaoMensagem = _dataBase.GetCollection<SimpleMessage>("message");
-            var linhas = colecaoMensagem.Find(FilterDefinition<SimpleMessage>.Empty);
-            return linhas.ToList();
+            try
+            {
+                var colecaoMensagem = _dataBase.GetCollection<SimpleMessage>("message");
+                var linhas = colecaoMensagem.Find(FilterDefinition<SimpleMessage>.Empty);
+                return linhas.ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MensagemRepositorio - Ocorreu um erro no metodo RetornarTodasMensagens. Erro: {ExceptionHelper.RecuperarDescricaoErro(ex)}");
+            }
+
+            return new List<SimpleMessage>();
         }
     }
 }

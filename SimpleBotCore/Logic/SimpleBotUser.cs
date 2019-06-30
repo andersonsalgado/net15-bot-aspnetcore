@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using MongoDB.Driver;
-using MongoDB.Bson;
 using SimpleBotCore.Repositorio.Mongo;
+using SimpleBotCore.Tools;
+using SimpleBotCore.Repositorio.SqlServer;
 
 namespace SimpleBotCore.Logic
 {
@@ -12,11 +9,13 @@ namespace SimpleBotCore.Logic
     {
         private readonly MensagemRepositorio _mensagemRepositorio;
         private readonly ContadorRepositorio _contadorRepositorio;
+        private readonly LogRepositorio _logRepositorio;
 
-        public SimpleBotUser(MensagemRepositorio mensagemRepositorio, ContadorRepositorio contadorRepositorio)
+        public SimpleBotUser(MensagemRepositorio mensagemRepositorio, ContadorRepositorio contadorRepositorio, LogRepositorio logRepositorio)
         {
             _mensagemRepositorio = mensagemRepositorio;
             _contadorRepositorio = contadorRepositorio;
+            _logRepositorio = logRepositorio;
         }
 
         public string Reply(SimpleMessage message)
@@ -24,17 +23,18 @@ namespace SimpleBotCore.Logic
 
             try
             {
+                _logRepositorio.GravarLog("Adicionando o contador");
                 _contadorRepositorio.GravarContador(message);
+
+                _logRepositorio.GravarLog($"Mensagem enviada: {message.Text}");
                 _mensagemRepositorio.GravarMensagem(message);
 
                 return $"{message.User} disse '{message.Text}'";
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                //throw;
+                Console.WriteLine($"SimpleBotUser - Ocorreu um erro no metodo Reply. Erro: {ExceptionHelper.RecuperarDescricaoErro(ex)}");
             }
-
 
             return "";
             

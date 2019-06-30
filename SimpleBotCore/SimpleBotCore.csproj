@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repositorio\SqlServer\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

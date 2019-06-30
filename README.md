@@ -11,6 +11,15 @@ A connectionString para o mongodb por não usar usuário ou senha, está configu
 
 Para o sqlserver é necessário criar a connectionString por secrets
 
+# Sugestão da secrets
+
+{
+  "myAppSetting": "Configuracao Secreta",
+  "ConnectionStrings": {
+    "sqlServerConnection": "Data Source=localhost;Initial Catalog=15NET_999;Persist Security Info=True;User ID=XXXXXX;Password=XXXXXXXX"
+  }
+}
+
 
 # Script do banco SQL server
 CREATE DATABASE "15NET_999"
