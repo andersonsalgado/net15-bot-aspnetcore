@@ -19,13 +19,14 @@ namespace SimpleBotCore.Controllers
     public class MessagesController : Controller
     {
         SimpleBotUser _bot;
+        private readonly MensagemRepositorio _mensagemRepositorio;
+        private readonly ContadorRepositorio _contadorRepositorio;
 
-        public String _strConnection;
-
-        public MessagesController(SimpleBotUser bot, IConfiguration config)
+        public MessagesController(SimpleBotUser bot, IConfiguration config, MensagemRepositorio mensagemRepositorio, ContadorRepositorio contadorRepositorio)
         {
             this._bot = bot;
-            this._strConnection = Util_ConfigSecrets.StrConnectionMongoDB(config);
+            _mensagemRepositorio = mensagemRepositorio;
+            _contadorRepositorio = contadorRepositorio;
         }
 
         [HttpGet]
@@ -38,12 +39,7 @@ namespace SimpleBotCore.Controllers
         [Route("getAllMessagens")]
         public List<SimpleMessage> GetAllMessagens()
         {
-            var cliente = new MongoClient(this._strConnection);
-            var db = cliente.GetDatabase("15Net");
-            var col = db.GetCollection<SimpleMessage>("message");
-
-            var linhas = col.Find(FilterDefinition<SimpleMessage>.Empty);
-            return linhas.ToList();
+            return _mensagemRepositorio.RetornarTodasMensagens();
         }
 
 
@@ -54,6 +50,9 @@ namespace SimpleBotCore.Controllers
             if (activity != null && activity.Type == ActivityTypes.Message)
             {
                 await HandleActivityAsync(activity);
+            } else if (activity != null && activity.Type == ActivityTypes.ConversationUpdate)
+            {
+                await ReplyUserAsync(activity, "Digite \"contador\" para listar quantas mensagens já foram enviadas.");
             }
 
             // HTTP 202
@@ -69,7 +68,18 @@ namespace SimpleBotCore.Controllers
 
             var message = new SimpleMessage(userFromId, userFromName, text);
 
-            string response = _bot.Reply(message);
+
+            string response = "";
+
+            if ("contador".Equals(text))
+            {
+                response = $"Você já digitou {Convert.ToString(_contadorRepositorio.RetornarContador())} mensagens";
+            } else
+            {
+                response = _bot.Reply(message);
+            }
+
+            
 
             await ReplyUserAsync(activity, response);
         }

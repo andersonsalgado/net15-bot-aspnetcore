@@ -33,38 +33,78 @@ namespace SimpleBotCore.Repositorio.Mongo
         public void GravarContador(SimpleMessage mensagem)
         {
 
-            var colecaoContador = _dataBase.GetCollection<BsonDocument>("usuarioContador");
-            var filter = Builders<BsonDocument>.Filter.Eq("id", mensagem.Id);
-
-            var contador = colecaoContador.Find(filter);
-
-            //Existe contador
-            if (contador.Any())
+            try
             {
-                var contadorGravado = contador.FirstOrDefault();
-                var elemento = contadorGravado.GetElement("contador");
+                var colecaoContador = _dataBase.GetCollection<BsonDocument>("usuarioContador");
+                var filter = Builders<BsonDocument>.Filter.Eq("id", mensagem.Id);
 
-                BsonElement bsonElement = new BsonElement("contador", Convert.ToInt32(elemento.Value) + 1);
-                contadorGravado.SetElement(bsonElement);
+                var contador = colecaoContador.Find(filter);
 
-                colecaoContador.DeleteMany(FilterDefinition<BsonDocument>.Empty);
-                colecaoContador.InsertOne(contadorGravado);
-            }
-            else
-            {
+                //Existe contador
+                if (contador.Any())
+                {
+                    var contadorGravado = contador.FirstOrDefault();
+                    var elemento = contadorGravado.GetElement("contador");
 
-                //Zerar contador
-                colecaoContador.DeleteMany(FilterDefinition<BsonDocument>.Empty);
+                    BsonElement bsonElement = new BsonElement("contador", Convert.ToInt32(elemento.Value) + 1);
+                    contadorGravado.SetElement(bsonElement);
 
-                var usuarioContador = new BsonDocument()
+                    colecaoContador.DeleteMany(FilterDefinition<BsonDocument>.Empty);
+                    colecaoContador.InsertOne(contadorGravado);
+                }
+                else
+                {
+
+                    //Zerar contador
+                    colecaoContador.DeleteMany(FilterDefinition<BsonDocument>.Empty);
+
+                    var usuarioContador = new BsonDocument()
                 {
                     { "id", mensagem.Id },
                     { "contador", 1}
                 };
 
-                colecaoContador.InsertOne(usuarioContador);
+                    colecaoContador.InsertOne(usuarioContador);
 
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ContadorRepositorio - Ocorreu um erro no metodo GravarContador. Erro: {ExceptionHelper.RecuperarDescricaoErro(ex)}");
+            }
+
+            
         }
+
+        public Int32 RetornarContador()
+        {
+
+            try
+            {
+                var colecaoContador = _dataBase.GetCollection<BsonDocument>("usuarioContador");
+                var contador = colecaoContador.Find(FilterDefinition<BsonDocument>.Empty);
+
+                if (contador.Any())
+                {
+                    var contadorGravado = contador.FirstOrDefault();
+                    var elemento = contadorGravado.GetElement("contador");
+
+                    return Convert.ToInt32(elemento.Value);
+
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"ContadorRepositorio - Ocorreu um erro no metodo RetornarContador. Erro: {ExceptionHelper.RecuperarDescricaoErro(ex)}");
+            }
+
+            return 0;
+        }
+
     }
 }

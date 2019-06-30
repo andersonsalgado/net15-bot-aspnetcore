@@ -38,5 +38,13 @@ namespace SimpleBotCore.Repositorio.Mongo
             colecaoMensagem.InsertOne(mensagem);
 
         }
+
+
+        public List<SimpleMessage> RetornarTodasMensagens()
+        {
+            var colecaoMensagem = _dataBase.GetCollection<SimpleMessage>("message");
+            var linhas = colecaoMensagem.Find(FilterDefinition<SimpleMessage>.Empty);
+            return linhas.ToList();
+        }
     }
 }
